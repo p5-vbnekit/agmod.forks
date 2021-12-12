@@ -4401,8 +4401,6 @@ void CBasePlayer :: UpdateClientData( void )
 			}
 		}
 
-		FireTargets( "game_playerspawn", this, this, USE_TOGGLE, 0 );
-
 #ifdef AG_NO_CLIENT_DLL
     InitStatusBar();
 #endif
