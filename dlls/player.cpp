@@ -995,7 +995,6 @@ void CBasePlayer::Killed( entvars_t *pevAttacker, int iGib )
 	if ( m_pTank != NULL )
 	{
 		m_pTank->Use( this, this, USE_OFF, 0 );
-		m_pTank = NULL;
 	}
 
 	// this client isn't going to be thinking for a while, so reset the sound until they respawn
@@ -1641,7 +1640,6 @@ void CBasePlayer::PlayerUse ( void )
 			// Stop controlling the tank
 			// TODO: Send HUD Update
 			m_pTank->Use( this, this, USE_OFF, 0 );
-			m_pTank = NULL;
 			return;
 		}
 		else
@@ -2812,7 +2810,6 @@ void CBasePlayer::PostThink()
 		else
 		{  // they've moved off the platform
 			m_pTank->Use( this, this, USE_OFF, 0 );
-			m_pTank = NULL;
 		}
 	}
 
