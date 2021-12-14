@@ -3,10 +3,14 @@ This is the source code and distribution files for Adrenaline Gamer Mod for Half
 AG 6.7 is not released yet, but you can download it in its current state (for testing) [here](https://drive.google.com/open?id=1QuSQ2GV8hfti3ZVOoUPkjNTzulqLRRc0).
 
 ## Changes from AG 6.6-U
-- Fixed snark crash fix
+- Fixed snark crash
+- Fixed tank crash
 - Fixed ammo counter when recording demo
 - Fixed fullupdate exploit
 - Fixed standing cropses
+- Fixed high network usage due to satchel 
+- Added "agforcespectator" command for voting (force player to spectator). For example, "agforcespectator #12"
+- Added "agforceteam" command for voting (force player team). For example, "agforceteam #12 red"
 - Gauss and RPG fixes enabled by default
 
 ## Original Team

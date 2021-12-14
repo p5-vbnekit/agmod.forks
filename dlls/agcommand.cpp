@@ -534,7 +534,8 @@ void AgCommand::TeamUp(CBasePlayer* pPlayer, const AgString& sPlayerIdOrName, co
 
     CBasePlayer* pTeamUpPlayer = AgPlayerByName(sPlayerIdOrName);
     if (pTeamUpPlayer)
-        pTeamUpPlayer->ChangeTeam(sTeam.c_str(), true);
+        if (sTeam.c_str() != "" || sTeam.c_str() != NULL)
+         pTeamUpPlayer->ChangeTeam(sTeam.c_str(), true);
 }
 
 void AgCommand::Spectator(CBasePlayer* pPlayer, const AgString& sPlayerIdOrName)
