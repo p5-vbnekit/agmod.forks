@@ -62,8 +62,8 @@ DLL_GLOBAL cvar_t	ag_vote_mp_fraglimit_low = { "sv_ag_vote_mp_fraglimit_low","0"
 DLL_GLOBAL cvar_t	ag_vote_mp_fraglimit_high = { "sv_ag_vote_mp_fraglimit_high","100" };
 DLL_GLOBAL cvar_t	ag_vote_extra_timelimit = { "sv_ag_vote_extra_timelimit","30" };
 
-DLL_GLOBAL cvar_t	ag_vote_team = { "sv_ag_vote_team", "1" }; // Allow vote to force someone to team up
-DLL_GLOBAL cvar_t	ag_vote_spectator = { "sv_ag_vote_spectator", "1" }; // Allow vote to force someone to spectate
+DLL_GLOBAL cvar_t	ag_vote_team = { "sv_ag_vote_team", "0" }; // Allow vote to force someone to team up
+DLL_GLOBAL cvar_t	ag_vote_spectator = { "sv_ag_vote_spectator", "0" }; // Allow vote to force someone to spectate
 
 DLL_GLOBAL cvar_t	ag_floodmsgs = { "sv_ag_floodmsgs","4" };
 DLL_GLOBAL cvar_t	ag_floodpersecond = { "sv_ag_floodpersecond","4" };
