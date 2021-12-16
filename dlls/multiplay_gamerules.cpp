@@ -610,6 +610,7 @@ void CHalfLifeMultiplay :: ClientDisconnected( edict_t *pClient )
 			}
 
 			pPlayer->RemoveAllItems( TRUE );// destroy all of the players weapons and items
+			DeactivateSatchels(pPlayer); // Deactivate all satchels from disconnected client (spizdil fix ot Maverick :D)
 		}
 	}
 }
