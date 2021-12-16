@@ -634,11 +634,11 @@ void AgResetMap()
 
     pEntity = NULL;
     while ((pEntity = UTIL_FindEntityByClassname(pEntity, "bolt")) != NULL)
-        pEntity->pev->dmg = 0;
+        UTIL_Remove(pEntity);
 
     pEntity = NULL;
     while ((pEntity = UTIL_FindEntityByClassname(pEntity, "hornet")) != NULL)
-        pEntity->pev->dmg = 0;
+        UTIL_Remove(pEntity);
 }
 
 char* AgStringToLower(char* pszString)
