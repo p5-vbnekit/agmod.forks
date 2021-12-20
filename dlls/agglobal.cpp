@@ -214,6 +214,9 @@ DLL_GLOBAL cvar_t	ag_fps_limit_punishment_slap_intensity = { "ag_fps_limit_punis
 DLL_GLOBAL cvar_t	ag_fps_limit_punishment_slap_interval = { "ag_fps_limit_punishment_slap_interval", "1.0", FCVAR_SERVER };  // Default: 1 second - Time between slaps
 DLL_GLOBAL cvar_t	ag_fps_limit_punishment_ban_time = { "ag_fps_limit_punishment_ban_time", "3", FCVAR_SERVER };  // Default: 3 minutes - How much time to ban them for
 
+DLL_GLOBAL cvar_t	ag_min_respawn_time = { "sv_ag_min_respawn_time", "0.75" }; // Default: 0.75 - avg @ 144 fps was 0.83s, but sometimes it went down to 0.7s...
+DLL_GLOBAL cvar_t	ag_forcerespawn_time = { "sv_ag_forcerespawn_time", "5" }; // Default: 5 - in seconds
+
 DLL_GLOBAL cvar_t	mm_agsay = { "mm_agsay","1", FCVAR_SERVER };
 
 
@@ -412,6 +415,9 @@ void AgInitGame()
     CVAR_REGISTER(&ag_fps_limit_punishment_slap_intensity);
     CVAR_REGISTER(&ag_fps_limit_punishment_slap_interval);
     CVAR_REGISTER(&ag_fps_limit_punishment_ban_time);
+
+    CVAR_REGISTER(&ag_min_respawn_time);
+    CVAR_REGISTER(&ag_forcerespawn_time);
 
     CVAR_REGISTER(&mm_agsay);
 

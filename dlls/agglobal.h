@@ -190,6 +190,9 @@ extern cvar_t ag_fps_limit_punishment_slap_intensity;
 extern cvar_t ag_fps_limit_punishment_slap_interval;
 extern cvar_t ag_fps_limit_punishment_ban_time;
 
+extern cvar_t ag_min_respawn_time;
+extern cvar_t ag_forcerespawn_time;
+
 extern bool g_bLangame;
 extern bool g_bUseTeamColors;
 
