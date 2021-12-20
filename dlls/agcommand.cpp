@@ -548,7 +548,10 @@ void AgCommand::Spectator(CBasePlayer* pPlayer, const AgString& sPlayerIdOrName)
 
     CBasePlayer* pSpectatorPlayer = AgPlayerByName(sPlayerIdOrName);
     if (pSpectatorPlayer)
+    {
+        pSpectatorPlayer->SetIngame(false);
         pSpectatorPlayer->Spectate_Start();
+    }
 }
 
 void AgCommand::Exec(const AgString& sExec, CBasePlayer* pPlayer)
