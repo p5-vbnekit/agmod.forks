@@ -37,6 +37,7 @@
 #include "pm_shared.h"
 #include "hltv.h"
 #include "spawnchooser.h"
+#include <algorithm>
 
 // #define DUCKFIX
 
