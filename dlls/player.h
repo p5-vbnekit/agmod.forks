@@ -423,6 +423,11 @@ public:
 
 	std::string m_UserInfoName;
 
+	float m_flMsecDelay;
+	float m_flMsecValue;
+	float m_flLastThinkTime;
+	bool m_bRespawning;
+
 
 	void          Init();     //Init all extra variables.
 	const char* GetAuthID(); //Get steam ID
@@ -501,6 +506,10 @@ public:
 	void Slap(float intensity);
 	bool ShouldLimitFps();
 	void LimitFps();
+
+	bool IsBot();
+	void BotThink();
+	void CalculateMsecValue();
 };
 //++ BulliT
 inline void CBasePlayer::Init()
@@ -696,6 +705,11 @@ inline bool CBasePlayer::IsTeammate(CBaseEntity* pTarget)
 {
 	return g_pGameRules->PlayerRelationship(this, pTarget) == GR_TEAMMATE;
 }
+
+inline bool CBasePlayer::IsBot()
+{
+	return pev->flags & FL_FAKECLIENT;
+};
 
 // Spectator Movement modes (stored in pev->iuser1, so the physics code can get at them)
 #define OBS_NONE				0

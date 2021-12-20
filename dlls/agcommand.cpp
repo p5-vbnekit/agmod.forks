@@ -583,6 +583,34 @@ void AgCommand::MaxTime()
     CVAR_SET_FLOAT("mp_timelimit", maxLimit);
 }
 
+void AgCommand::AddRespawningStaticBot()
+{
+    ASSERT(NULL != g_pGameRules);
+    if (!g_pGameRules)
+        return;
+
+    char buf[32];
+    snprintf(buf, sizeof(buf), "MT Bot %d", 100 + rand() % 400);
+
+    edict_t* pEntity = g_engfuncs.pfnCreateFakeClient(buf);
+    if (!pEntity)
+        return;
+
+    entvars_t* pev = &pEntity->v;
+    CBasePlayer* pBot = GetClassPtr((CBasePlayer*)pev); //Link bot object to the edict
+
+    pBot->Init();
+    pBot->m_bRespawning = true;
+    pBot->m_flLastThinkTime = gpGlobals->time - 0.1;
+
+    pBot->Spawn();
+    pev->flags |= FL_FAKECLIENT; // bot is fakeclient
+    pBot = static_cast<CBasePlayer*>(CBasePlayer::Instance(pEntity));
+
+    g_pGameRules->PlayerThink(pBot);
+    g_engfuncs.pfnSetClientKeyValue(pBot->entindex(), g_engfuncs.pfnGetInfoKeyBuffer(pEntity), "model", "pink");
+}
+
 void AgCommand::MoreTime()
 {
     ASSERT(NULL != g_pGameRules);

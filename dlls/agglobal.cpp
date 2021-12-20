@@ -62,6 +62,8 @@ DLL_GLOBAL cvar_t	ag_vote_mp_fraglimit_low = { "sv_ag_vote_mp_fraglimit_low","0"
 DLL_GLOBAL cvar_t	ag_vote_mp_fraglimit_high = { "sv_ag_vote_mp_fraglimit_high","100" };
 DLL_GLOBAL cvar_t	ag_vote_extra_timelimit = { "sv_ag_vote_extra_timelimit","30" };
 
+DLL_GLOBAL cvar_t	ag_vote_bot = { "sv_ag_vote_bot", "1" }; // Allow adding bots
+
 DLL_GLOBAL cvar_t	ag_vote_team = { "sv_ag_vote_team", "0" }; // Allow vote to force someone to team up
 DLL_GLOBAL cvar_t	ag_vote_spectator = { "sv_ag_vote_spectator", "0" }; // Allow vote to force someone to spectate
 
@@ -216,6 +218,8 @@ DLL_GLOBAL cvar_t	ag_fps_limit_punishment_ban_time = { "ag_fps_limit_punishment_
 
 DLL_GLOBAL cvar_t	ag_min_respawn_time = { "sv_ag_min_respawn_time", "0.75" }; // Default: 0.75 - avg @ 144 fps was 0.83s, but sometimes it went down to 0.7s...
 DLL_GLOBAL cvar_t	ag_forcerespawn_time = { "sv_ag_forcerespawn_time", "5" }; // Default: 5 - in seconds
+DLL_GLOBAL cvar_t	ag_bot_limit = { "sv_ag_bot_limit", "5", FCVAR_SERVER }; // Default: 5 - How many AG bots at max.
+DLL_GLOBAL cvar_t	ag_bots_allow_vote = { "sv_ag_bots_allow_vote",     "0", FCVAR_SERVER }; // Default: 0 - Bots don't take part in votes
 
 DLL_GLOBAL cvar_t	mm_agsay = { "mm_agsay","1", FCVAR_SERVER };
 
@@ -268,6 +272,8 @@ void AgInitGame()
     CVAR_REGISTER(&ag_wallgauss);
     CVAR_REGISTER(&ag_headshot);
     CVAR_REGISTER(&ag_blastradius);
+
+    CVAR_REGISTER(&ag_bot_limit);
 
     CVAR_REGISTER(&ag_ban_crowbar);
     CVAR_REGISTER(&ag_ban_glock);
@@ -360,6 +366,8 @@ void AgInitGame()
     CVAR_REGISTER(&ag_vote_mp_fraglimit_high);
     CVAR_REGISTER(&ag_vote_extra_timelimit);
 
+    CVAR_REGISTER(&ag_vote_bot);
+
     CVAR_REGISTER(&ag_vote_team);
     CVAR_REGISTER(&ag_vote_spectator);
 
@@ -418,6 +426,7 @@ void AgInitGame()
 
     CVAR_REGISTER(&ag_min_respawn_time);
     CVAR_REGISTER(&ag_forcerespawn_time);
+    CVAR_REGISTER(&ag_bots_allow_vote);
 
     CVAR_REGISTER(&mm_agsay);
 

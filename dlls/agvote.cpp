@@ -344,6 +344,40 @@ bool AgVote::HandleCommand(CBasePlayer* pPlayer)
 
                 return true;
             }
+            else if (FStrEq(m_sVote.c_str(), "spawnbot"))
+            {
+            if (ag_vote_bot.value == 0.0f)
+            {
+                AgConsole("Adding bots by vote is not allowed by server admin.", pPlayer);
+                return true;
+            }
+            if (ag_match_running.value != 0.0f && !g_bLangame)
+            {
+                AgConsole("Sorry, can't add a bot during a match.", pPlayer);
+                return true;
+            }
+
+            auto botsCount = 0;
+            for (int i = 1; i <= gpGlobals->maxClients; i++)
+            {
+                CBasePlayer* player = AgPlayerByIndex(i);
+
+                if (!player)
+                    continue;
+
+                if (player->IsBot())
+                    botsCount++;
+            }
+
+            if (botsCount >= ag_bot_limit.value)
+            {
+                AgConsole(UTIL_VarArgs("The limit of %d bots has been reached", ag_bot_limit.value), pPlayer);
+                return true;
+            }
+
+            CallVote(pPlayer);
+            return true;
+            }
             else if (0 == strncmp(m_sVote.c_str(), "mp_timelimit", 12))
             {
                 if (!ag_vote_setting.value)
@@ -404,6 +438,12 @@ bool AgVote::HandleCommand(CBasePlayer* pPlayer)
 
 bool AgVote::CallVote(CBasePlayer* pPlayer)
 {
+    if (pPlayer->IsBot() && ag_bots_allow_vote.value == 0)
+    {
+        // Bots cannot start votes when sv_ag_bots_allow_vote is 0
+        return false;
+    }
+
     m_fMaxTime = AgTime() + 30.0;  //30 seconds is enough.
     m_fNextCount = AgTime();       //Next count directly
     pPlayer->m_iVote = 1;          //Voter voted yes
@@ -420,7 +460,7 @@ bool AgVote::CallVote(CBasePlayer* pPlayer)
     );
     //-- muphicks
 
-    return false;
+    return true;
 }
 
 
@@ -441,6 +481,11 @@ void AgVote::Think()
             CBasePlayer* pPlayerLoop = AgPlayerByIndex(i);
             if (pPlayerLoop && !pPlayerLoop->IsProxy())
             {
+                if (pPlayerLoop->IsBot() && ag_bots_allow_vote.value == 0)
+                {
+                    // Bots do not take part in votes when sv_ag_bots_allow_vote is 0
+                    continue;
+                }
                 iPlayers++;
 
                 if (1 == pPlayerLoop->m_iVote)
@@ -525,6 +570,10 @@ void AgVote::Think()
             else if (FStrEq(m_sVote.c_str(), "agmoretime"))
             {
                 Command.MoreTime();
+            }
+            else if (FStrEq(m_sVote.c_str(), "spawnbot"))
+            {
+                Command.AddRespawningStaticBot();
             }
             else if (0 == strncmp(m_sVote.c_str(), "agforceteam", 11))
             {

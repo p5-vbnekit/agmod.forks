@@ -143,6 +143,7 @@ extern cvar_t	ag_vote_mp_fraglimit_low;
 extern cvar_t	ag_vote_mp_fraglimit_high;
 extern cvar_t	ag_vote_extra_timelimit;
 
+extern cvar_t	ag_vote_bot;
 extern cvar_t	ag_vote_team;
 extern cvar_t	ag_vote_spectator;
 
@@ -192,6 +193,9 @@ extern cvar_t ag_fps_limit_punishment_ban_time;
 
 extern cvar_t ag_min_respawn_time;
 extern cvar_t ag_forcerespawn_time;
+
+extern cvar_t ag_bot_limit;
+extern cvar_t ag_bots_allow_vote;
 
 extern bool g_bLangame;
 extern bool g_bUseTeamColors;
