@@ -46,6 +46,7 @@ public:
     static void MaxTime();
     static void MoreTime();
     static void AddRespawningStaticBot();
+    static void AddDummy(CBasePlayer* pPlayer);
 };
 
 extern DLL_GLOBAL AgCommand Command;
