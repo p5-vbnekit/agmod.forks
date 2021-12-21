@@ -93,7 +93,42 @@ bool AgVote::HandleCommand(CBasePlayer* pPlayer)
 
         return true;
     }
+  
+	  if (FStrEq(CMD_ARGV(0), "dummy"))
+	  {
+		  if (ag_vote_bot.value == 0.0f)
+		  {
+			  AgConsole("Adding bots is not allowed by server admin.", pPlayer);
+			  return true;
+		  }
+		  if (ag_match_running.value != 0.0f && !g_bLangame)
+		  {
+			  AgConsole("Sorry, can't add a bot during a match.", pPlayer);
+			  return true;
+		  }
 
+		  auto botsCount = 0;
+		  for (int i = 1; i <= gpGlobals->maxClients; i++)
+		  {
+			  CBasePlayer* player = AgPlayerByIndex(i);
+
+			  if (!player)
+				  continue;
+
+			  if (player->IsBot())
+				  botsCount++;
+		  }
+
+		  if (botsCount >= ag_bot_limit.value)
+		  {
+			  AgConsole(UTIL_VarArgs("The limit of %d bots has been reached", ag_bot_limit.value), pPlayer);
+			  return true;
+		  }
+		  Command.AddDummy(pPlayer);
+		  return true;
+	  }
+  
+  
     //Atleast two players.
     int iPlayers = 0;
     for (int i = 1; i <= gpGlobals->maxClients; i++)
