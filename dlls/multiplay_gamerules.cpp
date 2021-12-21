@@ -804,6 +804,14 @@ void CHalfLifeMultiplay :: PlayerKilled( CBasePlayer *pVictim, entvars_t *pKille
 	//++ BulliT
 	AgGameRules::PlayerKilled(pVictim, pKiller, pInflictor);
 	//-- Martin Webrant
+	if (pVictim->IsBot()) {
+		std::string bot_name = pVictim->GetName();
+		if (bot_name.find("Dummy") != std::string::npos) { 
+			char szCommand[128];
+			sprintf(szCommand, "kick \"%s\"\n", (const char*)pVictim->GetName());
+			SERVER_COMMAND(szCommand);
+		}
+	}	
 }
 
 //=========================================================
