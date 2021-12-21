@@ -611,6 +611,34 @@ void AgCommand::AddRespawningStaticBot()
     g_engfuncs.pfnSetClientKeyValue(pBot->entindex(), g_engfuncs.pfnGetInfoKeyBuffer(pEntity), "model", "pink");
 }
 
+void AgCommand::AddDummy(CBasePlayer* pPlayer) {
+	ASSERT(NULL != g_pGameRules);
+	if (!g_pGameRules)
+		return;
+
+	char buf[32];
+	snprintf(buf, sizeof(buf), "MT Dummy %d", 100 + rand() % 400);
+
+	edict_t* pEntity = g_engfuncs.pfnCreateFakeClient(buf);
+	if (!pEntity)
+		return;
+
+	entvars_t* pev = &pEntity->v;
+	CBasePlayer* pBot = GetClassPtr((CBasePlayer*)pev); //Link bot object to the edict
+
+	pBot->Init();
+
+	pBot->m_flLastThinkTime = gpGlobals->time - 0.1;
+
+	pBot->Spawn();
+	pev->flags |= FL_FAKECLIENT; // bot is fakeclient
+	pBot = static_cast<CBasePlayer*>(CBasePlayer::Instance(pEntity));
+
+	g_pGameRules->PlayerThink(pBot);
+	g_engfuncs.pfnSetClientKeyValue(pBot->entindex(), g_engfuncs.pfnGetInfoKeyBuffer(pEntity), "model", "pink");;
+	pev->origin = pPlayer->pev->origin; //teleport bot to player; maybe try to spawn bot to player's aim spot?
+}
+
 void AgCommand::MoreTime()
 {
     ASSERT(NULL != g_pGameRules);
