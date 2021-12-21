@@ -3172,7 +3172,11 @@ void CBasePlayer::Spawn( void )
 			spotNumber = index + 1;
 		}
 		ASSERT(spotNumber > 0);
-		UTIL_DispatchChat(nullptr, ChatType::SPAWN, UTIL_VarArgs("[MTBots-Lite] %s spawned at #%d\n", GetName(), spotNumber));
+		//ойой и тут костыли
+		std::string bot_name = GetName();
+		if (bot_name.find("Dummy")==std::string::npos) { //dont show spawn if bot is dummy 
+			UTIL_DispatchChat(nullptr, ChatType::SPAWN, UTIL_VarArgs("[MTBots-Lite] %s spawned at #%d\n", GetName(), spotNumber));
+		}
 	}
 
     SET_MODEL(ENT(pev), "models/player.mdl");
