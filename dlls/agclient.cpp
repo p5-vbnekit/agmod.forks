@@ -463,7 +463,15 @@ void AgClient::Say(CBasePlayer* pPlayer, say_type Type)
 
     if (1 > strlen(pSayText))
         return;
-
+    //shit code arent it ?
+    std::string catchbotmsg;
+	  catchbotmsg = pSayText;
+	  if (catchbotmsg.find("/dummy") != std::string::npos) {
+		  CLIENT_COMMAND(pPlayer->edict(), "dummy\n");
+	  }
+	  else if (catchbotmsg.find("/bot") != std::string::npos) {
+		  CLIENT_COMMAND(pPlayer->edict(), "spawnbot\n");
+	  }
     //Check AG teambind
     while (*pSayText && (pText - szText) < 200) //Dont overflow the string. Stop when its 200 chars.
     {
