@@ -638,6 +638,7 @@ void AgCommand::AddDummy(CBasePlayer* pPlayer) {
 
 	g_pGameRules->PlayerThink(pBot);
 	pev->origin = pPlayer->pev->origin; //teleport bot to player; maybe try to spawn bot to player's aim spot?
+        pev->angles = pPlayer->pev->angles; //set player angles
 }
 
 void AgCommand::MoreTime()
