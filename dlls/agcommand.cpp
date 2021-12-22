@@ -602,13 +602,12 @@ void AgCommand::AddRespawningStaticBot()
     pBot->Init();
     pBot->m_bRespawning = true;
     pBot->m_flLastThinkTime = gpGlobals->time - 0.1;
-
+    g_engfuncs.pfnSetClientKeyValue(pBot->entindex(), g_engfuncs.pfnGetInfoKeyBuffer(pEntity), "model", "pink");
     pBot->Spawn();
     pev->flags |= FL_FAKECLIENT; // bot is fakeclient
     pBot = static_cast<CBasePlayer*>(CBasePlayer::Instance(pEntity));
 
     g_pGameRules->PlayerThink(pBot);
-    g_engfuncs.pfnSetClientKeyValue(pBot->entindex(), g_engfuncs.pfnGetInfoKeyBuffer(pEntity), "model", "pink");
 }
 
 void AgCommand::AddDummy(CBasePlayer* pPlayer) {

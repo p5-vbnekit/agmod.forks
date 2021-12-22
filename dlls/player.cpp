@@ -567,7 +567,7 @@ int CBasePlayer :: TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, 
 	// keep track of amount of damage last sustained
 	m_lastDamageAmount = flDamage;
 
-	if (pAttacker && IsBot() && ag_match_running.value == 0)
+	if (pAttacker && IsBot())
 	{
 		if (pAttacker->pev->flags & FL_CLIENT)
 			UTIL_DispatchChat(pAttacker, ChatType::DAMAGE, UTIL_VarArgs("[MTBots-Lite] %s received %.1f damage from %s\n", GetName(), flDamage, pAttacker->GetName()));
@@ -3159,7 +3159,7 @@ void CBasePlayer::Spawn( void )
 	g_pGameRules->SetDefaultPlayerTeam( this );
 	g_pGameRules->GetPlayerSpawnSpot( this );
 
-	if (IsBot() && ag_match_running.value == 0)
+	if (IsBot())
 	{
 		const auto lastSpawn = g_spawnHistory[g_spawnHistory.size() - 1];
 		short spotNumber = -1;
