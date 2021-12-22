@@ -627,6 +627,8 @@ void AgCommand::AddDummy(CBasePlayer* pPlayer) {
 	CBasePlayer* pBot = GetClassPtr((CBasePlayer*)pev); //Link bot object to the edict
 
 	pBot->Init();
+	
+	g_engfuncs.pfnSetClientKeyValue(pBot->entindex(), g_engfuncs.pfnGetInfoKeyBuffer(pEntity), "model", "pink");
 
 	pBot->m_flLastThinkTime = gpGlobals->time - 0.1;
 
@@ -635,7 +637,6 @@ void AgCommand::AddDummy(CBasePlayer* pPlayer) {
 	pBot = static_cast<CBasePlayer*>(CBasePlayer::Instance(pEntity));
 
 	g_pGameRules->PlayerThink(pBot);
-	g_engfuncs.pfnSetClientKeyValue(pBot->entindex(), g_engfuncs.pfnGetInfoKeyBuffer(pEntity), "model", "pink");;
 	pev->origin = pPlayer->pev->origin; //teleport bot to player; maybe try to spawn bot to player's aim spot?
 }
 
