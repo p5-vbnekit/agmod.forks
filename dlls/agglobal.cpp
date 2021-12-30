@@ -434,7 +434,7 @@ void AgInitGame()
 
     //Set up initial settings. Add "startup_" before
     char* servercfgfile = (char*)CVAR_GET_STRING("servercfgfile");
-
+    ALERT(at_console, "Server is using AG 6.6-Updated library now!\n");
     if (servercfgfile && servercfgfile[0])
     {
         char szCommand[256];
