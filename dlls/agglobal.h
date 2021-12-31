@@ -196,6 +196,7 @@ extern cvar_t ag_forcerespawn_time;
 
 extern cvar_t ag_bot_limit;
 extern cvar_t ag_bots_allow_vote;
+extern cvar_t ag_restrict_votes;
 
 extern bool g_bLangame;
 extern bool g_bUseTeamColors;

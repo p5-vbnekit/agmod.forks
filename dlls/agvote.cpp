@@ -144,6 +144,14 @@ bool AgVote::HandleCommand(CBasePlayer* pPlayer)
     */
     if (m_fMaxTime || m_fNextCount)
     {
+        if (pPlayer->HasVotingRestrictions())
+        {
+            if (FStrEq("yes", CMD_ARGV(0)) || FStrEq("no", CMD_ARGV(0)))
+                AgConsole("Spectators are not allowed to vote during this match.", pPlayer);
+
+            return false;
+        }
+
         if (FStrEq("yes", CMD_ARGV(0)))
         {
             pPlayer->m_iVote = 1;
@@ -479,6 +487,12 @@ bool AgVote::CallVote(CBasePlayer* pPlayer)
         return false;
     }
 
+    if (pPlayer->HasVotingRestrictions() && !pPlayer->IsAdmin())
+    {
+        AgConsole("Spectators are not allowed to start a vote during this match.", pPlayer);
+        return false;
+    }
+
     m_fMaxTime = AgTime() + 30.0;  //30 seconds is enough.
     m_fNextCount = AgTime();       //Next count directly
     pPlayer->m_iVote = 1;          //Voter voted yes
@@ -521,6 +535,13 @@ void AgVote::Think()
                     // Bots do not take part in votes when sv_ag_bots_allow_vote is 0
                     continue;
                 }
+
+                if (pPlayerLoop->HasVotingRestrictions())
+                {
+                    // Players who are not playing in the match cannot vote if votes are restricted
+                    continue;
+                }
+
                 iPlayers++;
 
                 if (1 == pPlayerLoop->m_iVote)
@@ -688,6 +709,19 @@ bool AgVote::ResetVote()
     m_fNextVote = AgTime();
     m_bRunning = false;
     return true;
+}
+
+bool CBasePlayer::HasVotingRestrictions()
+{
+    if (ag_restrict_votes.value == 0.0f)
+        return false;
+
+    if (ag_restrict_votes.value == 1.0f && ag_match_running.value == 1.0f && IsSpectator())
+        return true;
+
+    // There may be ag_restrict_value 2 or higher in the future
+
+    return false;
 }
 
 //-- Martin Webrant

@@ -220,6 +220,7 @@ DLL_GLOBAL cvar_t	ag_min_respawn_time = { "sv_ag_min_respawn_time", "0.75" }; //
 DLL_GLOBAL cvar_t	ag_forcerespawn_time = { "sv_ag_forcerespawn_time", "5" }; // Default: 5 - in seconds
 DLL_GLOBAL cvar_t	ag_bot_limit = { "sv_ag_bot_limit", "5", FCVAR_SERVER }; // Default: 5 - How many AG bots at max.
 DLL_GLOBAL cvar_t	ag_bots_allow_vote = { "sv_ag_bots_allow_vote",     "0", FCVAR_SERVER }; // Default: 0 - Bots don't take part in votes
+DLL_GLOBAL cvar_t	ag_restrict_votes = { "sv_ag_restrict_votes",  "0" }; // Default: 0 - Don't restrict votes
 
 DLL_GLOBAL cvar_t	mm_agsay = { "mm_agsay","1", FCVAR_SERVER };
 
@@ -427,6 +428,7 @@ void AgInitGame()
     CVAR_REGISTER(&ag_min_respawn_time);
     CVAR_REGISTER(&ag_forcerespawn_time);
     CVAR_REGISTER(&ag_bots_allow_vote);
+    CVAR_REGISTER(&ag_restrict_votes);
 
     CVAR_REGISTER(&mm_agsay);
 

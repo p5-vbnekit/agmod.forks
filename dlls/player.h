@@ -510,6 +510,8 @@ public:
 	bool IsBot();
 	void BotThink();
 	void CalculateMsecValue();
+
+	bool HasVotingRestrictions();
 };
 //++ BulliT
 inline void CBasePlayer::Init()
