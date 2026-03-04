@@ -4,6 +4,10 @@
 # October 2001 by Leon Hartwig (hartwig@valvesoftware.com)
 #
 
+all:
+.PHONY: all neet clean spotless
+.DEFAULT: all
+
 DLLNAME=ag
 
 ARCH=i386
@@ -195,6 +199,8 @@ OBJ = \
 $(DLLNAME)_$(ARCH).$(SHLIBEXT) : neat $(OBJ)
 	$(CC) $(CFLAGS) $(SHLIBLDFLAGS) $(LDFLAGS) -o $@ $(OBJ)
 
+all: $(DLLNAME)_$(ARCH).$(SHLIBEXT)
+
 neat:
 	-mkdir $(DLL_OBJDIR)
 	-mkdir $(WPN_SHARED_OBJDIR)
@@ -208,4 +214,3 @@ spotless: clean
 	-rm -r $(WPN_SHARED_OBJDIR)
 	-rm -r $(GAME_SHARED_OBJDIR)
 	-rm -r $(PM_SHARED_OBJDIR)
-

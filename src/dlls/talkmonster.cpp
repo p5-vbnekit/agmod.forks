@@ -23,6 +23,8 @@
 #include	"soundent.h"
 #include	"animation.h"
 
+using ::std::min, ::std::max;
+
 //=========================================================
 // Talking monster base class
 // Used for scientists and barneys
@@ -423,11 +425,11 @@ void CTalkMonster :: StartTask( Task_t *pTask )
 
 			if (yaw < 0)
 			{
-				pev->ideal_yaw = min( yaw + 45, 0 ) + pev->angles.y;
+				pev->ideal_yaw = min<float>( yaw + 45, 0 ) + pev->angles.y;
 			}
 			else
 			{
-				pev->ideal_yaw = max( yaw - 45, 0 ) + pev->angles.y;
+				pev->ideal_yaw = max<float>( yaw - 45, 0 ) + pev->angles.y;
 			}
 		}
 		TaskComplete();

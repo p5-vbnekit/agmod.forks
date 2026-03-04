@@ -31,6 +31,8 @@
 #include "decals.h"
 #include "gamerules.h"
 
+using ::std::min, ::std::max;
+
 extern CGraph	WorldGraph;
 extern int gEvilImpulse101;
 

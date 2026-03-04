@@ -35,6 +35,8 @@
 #include "gamerules.h"
 #include "game.h"
 
+using ::std::min, ::std::max;
+
 // #define DUCKFIX
 
 extern DLL_GLOBAL ULONG		g_ulModelIndexPlayer;

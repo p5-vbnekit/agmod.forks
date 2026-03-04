@@ -27,6 +27,8 @@
 #include	"soundent.h"
 #include	"game.h"
 
+using ::std::min, ::std::max;
+
 extern CGraph WorldGraph;
 
 // houndeye does 20 points of damage spread over a sphere 384 units in diameter, and each additional 
@@ -97,7 +99,7 @@ public:
 	BOOL FValidateHintType ( short sHint );
 	BOOL FCanActiveIdle ( void );
 	Schedule_t *GetScheduleOfType ( int Type );
-	Schedule_t *CHoundeye :: GetSchedule( void );
+	Schedule_t *GetSchedule( void );
 
 	int	Save( CSave &save ); 
 	int Restore( CRestore &restore );

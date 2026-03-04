@@ -27,6 +27,8 @@ extern DLL_GLOBAL int		g_iSkillLevel;
 #define SF_WAITFORTRIGGER	(0x04 | 0x40) // UNDONE: Fix!
 #define SF_NOWRECKAGE		0x08
 
+using ::std::min, ::std::max;
+
 class CApache : public CBaseMonster
 {
 	int		Save( CSave &save );

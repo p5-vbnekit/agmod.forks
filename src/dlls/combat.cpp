@@ -43,6 +43,7 @@ extern entvars_t *g_pevLastInflictor;
 #define	HUMAN_GIB_COUNT			6
 #define ALIEN_GIB_COUNT			4
 
+using ::std::min, ::std::max;
 
 // HACKHACK -- The gib velocity equations don't work
 void CGib :: LimitVelocity( void )

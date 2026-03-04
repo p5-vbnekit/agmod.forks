@@ -30,6 +30,8 @@
 #include "maprules.h"
 #include "player.h"
 
+using ::std::min, ::std::max;
+
 class CRuleEntity : public CBaseEntity
 {
 public:

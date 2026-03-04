@@ -27,6 +27,8 @@
 #include "agglobal.h"
 //-- Martin Webrant
 
+using ::std::min, ::std::max;
+
 #define	HULL_STEP_SIZE 16// how far the test hull moves on each step
 #define	NODE_HEIGHT	8	// how high to lift nodes off the ground after we drop them all (make stair/ramp mapping easier)
 

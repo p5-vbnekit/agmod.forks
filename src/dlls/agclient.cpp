@@ -17,7 +17,7 @@ extern CVoiceGameMgr g_VoiceGameMgr;
 
 #ifdef AGMSGSTAT
 #include "agmsgstat.h"
-#endif 
+#endif
 
 extern cvar_t timeleft, fragsleft;
 extern int gmsgSayText;
@@ -514,7 +514,7 @@ void AgClient::Say(CBasePlayer* pPlayer, say_type Type )
         //Weapon
         if (pPlayer && pPlayer->IsAlive() && !pPlayer->IsSpectator() && pPlayer->m_pActiveItem && pPlayer->m_pActiveItem->m_iId < MAX_WEAPONS)
         {
-          char* pWeapon = strstr(pPlayer->m_pActiveItem->pszName(),"weapon_");
+          char* pWeapon = strstr(const_cast<char *>(pPlayer->m_pActiveItem->pszName()),"weapon_");
           if (pWeapon)
           {
             pText = pText + sprintf(pText,"%s",&pWeapon[7]);

@@ -30,6 +30,8 @@
 #include "aggamerules.h"
 #include "multi_gamerules.h"
 
+using ::std::min, ::std::max;
+
 //extern DLL_GLOBAL CGameRules	*g_pGameRules;
 extern DLL_GLOBAL AgGameRules	*g_pGameRules;
 extern int gmsgAuthID;

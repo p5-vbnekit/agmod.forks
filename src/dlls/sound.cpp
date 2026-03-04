@@ -24,6 +24,7 @@
 #include "talkmonster.h"
 #include "gamerules.h"
 
+using ::std::min, ::std::max;
 
 static char *memfgets( byte *pMemFile, int fileSize, int &filePos, char *pBuffer, int bufferSize );
 

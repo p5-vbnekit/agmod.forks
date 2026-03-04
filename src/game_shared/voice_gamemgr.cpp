@@ -5,6 +5,7 @@
 // $NoKeywords: $
 //=============================================================================
 
+#include "string.h"
 #include "voice_gamemgr.h"
 #include <string.h>
 #include <assert.h>

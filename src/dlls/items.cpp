@@ -29,6 +29,8 @@
 #include "items.h"
 #include "gamerules.h"
 
+using ::std::min, ::std::max;
+
 extern int gmsgItemPickup;
 
 class CWorldItem : public CBaseEntity

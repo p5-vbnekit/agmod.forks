@@ -55,6 +55,8 @@ extern int g_teamplay;
 
 void LinkUserMessages( void );
 
+using ::std::min, ::std::max;
+
 /*
  * used by kill command and disconnect command
  * ROBIN: Moved here from player.cpp, to allow multiple player models

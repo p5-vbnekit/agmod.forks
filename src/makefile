@@ -30,7 +30,7 @@ BASE_CFLAGS=	-Dstricmp=strcasecmp -D_strnicmp=strncasecmp -Dstrnicmp=strncasecmp
 #CFLAGS=$(BASE_CFLAGS) -w -m486 -O1
 
 #full optimization - optimize for PIII but make it run on a pentium classic
-CFLAGS=$(BASE_CFLAGS) -w -O2 -mcpu=i686 -march=i586 -ffast-math -funroll-loops \
+CFLAGS=$(BASE_CFLAGS) -w -O3 -g0 -mcpu=i686 -march=i586 -ffast-math -funroll-loops \
 	-fomit-frame-pointer -fexpensive-optimizations \
 	-malign-loops=2 -malign-jumps=2 -malign-functions=2
 

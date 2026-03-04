@@ -31,6 +31,8 @@
 #include "weapons.h"
 #include "gamerules.h"
 
+using ::std::min, ::std::max;
+
 float UTIL_WeaponTimeBase( void )
 {
 #if defined( CLIENT_WEAPONS )
