@@ -50,6 +50,8 @@ DLL_GLOBAL bool g_bTeam2FlagLost;
 FILE_GLOBAL int	s_iPlayerFlag1;
 FILE_GLOBAL int	s_iPlayerFlag2;
 
+extern DLL_GLOBAL AgString g_sRollBackMode;
+
 extern int gmsgTeamScore;
 
 AgCTF::AgCTF()
@@ -1138,20 +1140,22 @@ LINK_ENTITY_TO_CLASS( carried_flag_team2, AgCTFPlayerFlagTeam2 );
 
 class AgCTFDetect : public CBaseEntity
 {
-	void Spawn( void )
-	{
-		UTIL_SetOrigin( pev, pev->origin );
-		pev->solid = SOLID_NOT;
-		pev->effects = EF_NODRAW;		
+    void Spawn( void )
+    {
+        UTIL_SetOrigin( pev, pev->origin );
+        pev->solid = SOLID_NOT;
+        pev->effects = EF_NODRAW;
 
-    AgString sGametype = CVAR_GET_STRING("sv_ag_gametype");
-    if (sGametype != "ctf")
-      CVAR_SET_STRING("sv_ag_gamemode","ctf");
-	}
-	void KeyValue( KeyValueData* pkvd)
-  { 
-    pkvd->fHandled = FALSE; 
-  }
+        AgString sGametype = CVAR_GET_STRING("sv_ag_gametype");
+        if (sGametype != "ctf") {
+            if (0 == g_sRollBackMode.size()) g_sRollBackMode = CVAR_GET_STRING("sv_ag_gamemode");
+            CVAR_SET_STRING("sv_ag_gamemode","ctf");
+        }
+    }
+    void KeyValue( KeyValueData* pkvd)
+    { 
+        pkvd->fHandled = FALSE; 
+    }
 };
 #ifndef AG_NO_CLIENT_DLL
 LINK_ENTITY_TO_CLASS( info_hmctfdetect, AgCTFDetect );

@@ -19,6 +19,8 @@ DLL_GLOBAL AgString g_sGamemode;
 DLL_GLOBAL AgString g_sNextmode;
 DLL_GLOBAL BYTE g_GameType = STANDARD;
 
+extern DLL_GLOBAL AgString g_sRollBackMode;
+
 void SetupGametype()
 {
   AgString sGametype = CVAR_GET_STRING("sv_ag_gametype");
@@ -166,6 +168,7 @@ void AgGameMode::Gamemode(const AgString& sGamemode,CBasePlayer* pPlayer)
   if ((IsGamemode(sGamemode) && !pPlayer) || IsAllowedGamemode(sGamemode,pPlayer))
   {
     CVAR_SET_STRING("sv_ag_gamemode",sGamemode.c_str());
+    g_sRollBackMode = "";
     AgConsole("Gamemode changed.", pPlayer);
     g_sNextmode = "";
   }
@@ -180,6 +183,7 @@ void AgGameMode::NextGamemode(const AgString& sGamemode,CBasePlayer* pPlayer)
   if ((IsGamemode(sGamemode) && !pPlayer) || IsAllowedGamemode(sGamemode,pPlayer))
   {
     g_sNextmode = sGamemode;
+    g_sRollBackMode = "";
     AgConsole("Next Gamemode changed.", pPlayer);
   }
   else

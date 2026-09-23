@@ -37,6 +37,8 @@ extern int gmsgMOTD;
 
 int g_teamplay = 0;
 
+DLL_GLOBAL AgString g_sRollBackMode;
+
 //=========================================================
 //=========================================================
 BOOL CGameRules::CanHaveAmmo( CBasePlayer *pPlayer, const char *pszAmmoName, int iMaxCarry )
@@ -333,16 +335,25 @@ AgGameRules *InstallGameRules( void )
   if (AgIsCTFMap(STRING(gpGlobals->mapname)))
   {
     AgString sGametype = CVAR_GET_STRING("sv_ag_gametype");
-    if (sGametype != "ctf" && NULL == strstr(CVAR_GET_STRING("sv_ag_gamemode"), "ctf"))
+    if (sGametype != "ctf" && NULL == strstr(CVAR_GET_STRING("sv_ag_gamemode"), "ctf")) {
+      if (0 == g_sRollBackMode.size()) g_sRollBackMode = CVAR_GET_STRING("sv_ag_gamemode");
       CVAR_SET_STRING("sv_ag_gamemode","ctf");
+    }
   }
 
   //Detect DOM maps.
-  if (AgIsDOMMap(STRING(gpGlobals->mapname)))
+  else if (AgIsDOMMap(STRING(gpGlobals->mapname)))
   {
     AgString sGametype = CVAR_GET_STRING("sv_ag_gametype");
-    if (sGametype != "dom")
+    if (sGametype != "dom") {
+      if (0 == g_sRollBackMode.size()) g_sRollBackMode = CVAR_GET_STRING("sv_ag_gamemode");
       CVAR_SET_STRING("sv_ag_gamemode","dom");
+    }
+  }
+
+  else if (0 < g_sRollBackMode.size()) {
+    CVAR_SET_STRING("sv_ag_gamemode", g_sRollBackMode.c_str());
+    g_sRollBackMode = "";
   }
 #endif
 

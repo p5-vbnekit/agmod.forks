@@ -18,8 +18,6 @@
 #include <ministl/vector>
 #include <ministl/algorithm>
 
-typedef string         AgString;
-
 typedef string AgString;
 typedef list<AgString> AgStringList;
 typedef set<AgString, less<AgString> > AgStringSet;
