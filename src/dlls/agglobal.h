@@ -190,7 +190,7 @@ void AgDirList(const AgString& sDir, AgStringSet& setFiles);
 
 void AgSendDirectorMessage( CBaseEntity *ent1, CBaseEntity *ent2, int priority ); 
 
-void AgStripColors(char* pszString);
+size_t AgStripColors(char* pszString);
 
 
 void AgGetDetails(char* pszDetails, int iMaxSize, int* piSize);

@@ -337,65 +337,49 @@ void AgCTF::ClientDisconnected(CBasePlayer* pPlayer)
   PlayerDropFlag(pPlayer);
 }
 
-void AgCTF::PlayerKilled(CBasePlayer* pPlayer,entvars_t *pKiller)
+void AgCTF::PlayerKilled(CBasePlayer* pPlayer, entvars_t *pKiller)
 {
   ASSERT(NULL != pPlayer);
-  if (!pPlayer)
-    return;
+  if (! pPlayer) return;
   ASSERT(NULL != pPlayer->pev);
-  if (!pPlayer->pev)
-    return;
+ if (! pPlayer->pev) return;
 
-  CBaseEntity* pKillerBE = CBaseEntity::Instance(pKiller);
-  if (pKillerBE && CLASS_PLAYER == pKillerBE->Classify())
-  {
-    CBasePlayer* pKillerPlayer = ((CBasePlayer*)pKillerBE);
-    AddPointsForKill(pKillerPlayer,pPlayer);
-  }
+  CBaseEntity * const pKillerEntity = CBaseEntity::Instance(pKiller);
+  if (pKillerEntity && (CLASS_PLAYER == pKillerEntity->Classify())) AddPointsForKill(static_cast<CBasePlayer *>(pKillerEntity), pPlayer);
 
-  bool bReturnDirectly = (0 == strcmp(STRING(pKiller->classname),"trigger_hurt"));
+  if ((0 == strcmp(STRING(pKiller->classname), "trigger_hurt"))) {
+    AgString sText = " flag returned!";
 
-  if (bReturnDirectly)
-  {
-    if (pPlayer->m_bFlagTeam1)
-    {
-      CBaseEntity* pEntity = NULL;	
+    if (pPlayer->m_bFlagTeam1) {
+      CBaseEntity* pEntity = NULL;
       pEntity = NULL;
-      while ((pEntity = UTIL_FindEntityByClassname( pEntity, "carried_flag_team1" )) != NULL)
-        UTIL_Remove(pEntity);
+      while ((pEntity = UTIL_FindEntityByClassname(pEntity, "carried_flag_team1")) != NULL) UTIL_Remove(pEntity);
       pPlayer->m_bFlagTeam1 = false;
       AgCTFFlag::ResetFlag(CTF_TEAM1_NAME);
-
-		  char szText[201];
-			sprintf(szText, "%s flag returned!", CTF_TEAM1_NAME);
-      AgConsole(szText);
-			UTIL_ClientPrintAll( HUD_PRINTCENTER, szText );
-
-      MESSAGE_BEGIN( MSG_ALL, gmsgCTFSound );
-        WRITE_BYTE( BlueFlagReturned );
+      sText = AgString(CTF_TEAM1_NAME) + sText;
+      AgConsole(sText.c_str());
+      UTIL_ClientPrintAll(HUD_PRINTCENTER, sText.c_str());
+      MESSAGE_BEGIN(MSG_ALL, gmsgCTFSound);
+        WRITE_BYTE(BlueFlagReturned);
       MESSAGE_END();
     }
-    else if (pPlayer->m_bFlagTeam2)
-    {
-      CBaseEntity* pEntity = NULL;	
+
+    else if (pPlayer->m_bFlagTeam2) {
+      CBaseEntity* pEntity = NULL;
       pEntity = NULL;
-      while ((pEntity = UTIL_FindEntityByClassname( pEntity, "carried_flag_team2" )) != NULL)
-        UTIL_Remove(pEntity);
+      while ((pEntity = UTIL_FindEntityByClassname(pEntity, "carried_flag_team2")) != NULL) UTIL_Remove(pEntity);
       pPlayer->m_bFlagTeam2 = false;
       AgCTFFlag::ResetFlag(CTF_TEAM2_NAME);
-
-      char szText[201];
-			sprintf(szText, "%s flag returned!", CTF_TEAM2_NAME);
-      AgConsole(szText);
-			UTIL_ClientPrintAll( HUD_PRINTCENTER, szText );
-
-      MESSAGE_BEGIN( MSG_ALL, gmsgCTFSound );
-        WRITE_BYTE( RedFlagReturned );
+      sText = AgString(CTF_TEAM2_NAME) + sText;
+      AgConsole(sText.c_str());
+      UTIL_ClientPrintAll(HUD_PRINTCENTER, sText.c_str());
+      MESSAGE_BEGIN(MSG_ALL, gmsgCTFSound);
+        WRITE_BYTE(RedFlagReturned);
       MESSAGE_END();
     }
   }
-  else
-    PlayerDropFlag(pPlayer);
+
+  else PlayerDropFlag(pPlayer);
 }
 
 void AgCTF::AddPointsForKill(CBasePlayer *pAttacker, CBasePlayer *pKilled)
@@ -431,58 +415,57 @@ void AgCTF::AddPointsForKill(CBasePlayer *pAttacker, CBasePlayer *pKilled)
 void AgCTF::PlayerDropFlag(CBasePlayer* pPlayer, bool bPlayerDrop)
 {
   ASSERT(NULL != pPlayer);
-  if (!pPlayer)
-    return;
+  if (! pPlayer) return;
   ASSERT(NULL != pPlayer->pev);
-  if (!pPlayer->pev)
-    return;
+  if (! pPlayer->pev) return;
 
-	//When carrying a flag, drop it!
-	if (pPlayer->m_bFlagTeam1 || pPlayer->m_bFlagTeam2)
-	{
-		char szText [201];
+  //When carrying a flag, drop it!
+  if (pPlayer->m_bFlagTeam1 || pPlayer->m_bFlagTeam2) {
+    AgString sText;
+    CBaseEntity *pEnt = NULL;
 
-		CBaseEntity *pEnt = NULL;
+    if (bPlayerDrop) UTIL_MakeVectors(pPlayer->pev->angles);
 
-    if (bPlayerDrop)
-		  UTIL_MakeVectors ( pPlayer->pev->angles ); 
-
-		if (pPlayer->m_bFlagTeam1)
-		{
-      pEnt = CBaseEntity::Create( "item_flag_team1", bPlayerDrop? (pPlayer->pev->origin + gpGlobals->v_forward * 10) : pPlayer->pev->origin, pPlayer->pev->angles, pPlayer->edict() );
-			sprintf(szText, "%s lost the %s flag!", STRING(pPlayer->pev->netname), CTF_TEAM1_NAME);
-      AgConsole(szText);
-			UTIL_ClientPrintAll( HUD_PRINTCENTER, szText );
+    if (pPlayer->m_bFlagTeam1) {
+      pEnt = CBaseEntity::Create("item_flag_team1", bPlayerDrop ? (pPlayer->pev->origin + gpGlobals->v_forward * 10) : pPlayer->pev->origin, pPlayer->pev->angles, pPlayer->edict());
+      sText = STRING(pPlayer->pev->netname);
+      sText.resize(AgStripColors(const_cast<char *>(sText.c_str())));
+      sText += AgString(" lost the ") + CTF_TEAM1_NAME + " flag!";
+      AgConsole(sText.c_str());
+      UTIL_ClientPrintAll(HUD_PRINTCENTER, sText.c_str());
       g_bTeam1FlagLost = true;
-		}
-		else if (pPlayer->m_bFlagTeam2)
-		{
-			pEnt = CBaseEntity::Create( "item_flag_team2", bPlayerDrop? (pPlayer->pev->origin + gpGlobals->v_forward * 10) : pPlayer->pev->origin, pPlayer->pev->angles, pPlayer->edict() );
-			sprintf(szText, "%s lost the %s flag!", STRING(pPlayer->pev->netname), CTF_TEAM2_NAME);
-      AgConsole(szText);
-			UTIL_ClientPrintAll( HUD_PRINTCENTER, szText );
-      g_bTeam2FlagLost = true;
-		}
-
-    if (bPlayerDrop)
-    {
-      pEnt->pev->velocity = gpGlobals->v_forward * 300 + gpGlobals->v_forward * 100;
- 			pEnt->pev->angles.z = 0;
     }
-    else
-		  pEnt->pev->velocity = pPlayer->pev->velocity * 1.2;
-		pEnt->pev->angles.x = 0;
 
-		AgCTFFlag *pFlag = (AgCTFFlag *)pEnt;
+    else if (pPlayer->m_bFlagTeam2) {
+      pEnt = CBaseEntity::Create("item_flag_team2", bPlayerDrop? (pPlayer->pev->origin + gpGlobals->v_forward * 10) : pPlayer->pev->origin, pPlayer->pev->angles, pPlayer->edict());
+      sText = STRING(pPlayer->pev->netname);
+      sText.resize(AgStripColors(const_cast<char *>(sText.c_str())));
+      sText += AgString(" lost the ") + CTF_TEAM2_NAME + " flag!";
+      AgConsole(sText.c_str());
+      UTIL_ClientPrintAll(HUD_PRINTCENTER, sText.c_str());
+      g_bTeam2FlagLost = true;
+    }
 
-    if (bPlayerDrop)
-      pFlag->m_fNextTouch = gpGlobals->time + 0.5; //Gotta give the flag a bit of time to fly away from player before it can be picked up again.
-		pFlag->m_bDropped = true;
+    if (bPlayerDrop) {
+      pEnt->pev->velocity = gpGlobals->v_forward * 300 + gpGlobals->v_forward * 100;
+      pEnt->pev->angles.z = 0;
+    }
 
-	  pFlag->m_fNextReset = gpGlobals->time + ag_ctf_flag_resettime.value;
+    else pEnt->pev->velocity = pPlayer->pev->velocity * 1.2;
 
-		pPlayer->m_bFlagTeam1 = false;
-		pPlayer->m_bFlagTeam2 = false;
+    pEnt->pev->angles.x = 0;
+
+    AgCTFFlag *pFlag = (AgCTFFlag *)pEnt;
+
+    //Gotta give the flag a bit of time to fly away from player before it can be picked up again.
+    if (bPlayerDrop) pFlag->m_fNextTouch = gpGlobals->time + 0.5; 
+
+    pFlag->m_bDropped = true;
+
+    pFlag->m_fNextReset = gpGlobals->time + ag_ctf_flag_resettime.value;
+
+    pPlayer->m_bFlagTeam1 = false;
+    pPlayer->m_bFlagTeam2 = false;
   }
 }
 
@@ -548,69 +531,63 @@ void AgCTFFlag::Precache( void )
 
 void AgCTFFlag::Capture(CBasePlayer *pPlayer, const char *m_szTeamName)
 {
-	char szText[201];
+  AgString sText = STRING(pPlayer->pev->netname);
+  sText.resize(AgStripColors(const_cast<char *>(sText.c_str())));
+  sText += AgString(" captured the ") + m_szTeamName + " flag!";
+  AgConsole(sText.c_str());
+  UTIL_ClientPrintAll(HUD_PRINTCENTER, sText.c_str());
 
-	sprintf(szText, "%s captured the %s flag!", STRING(pPlayer->pev->netname), m_szTeamName);
-  AgConsole(szText);
-	UTIL_ClientPrintAll( HUD_PRINTCENTER, szText );
+  //Give the player the points
+  pPlayer->AddPoints(ag_ctf_capturepoints.value, TRUE);
+  pPlayer->AddPointsToTeam(ag_ctf_teamcapturepoints.value, TRUE);
 
-	//Give the player the points
-	pPlayer->AddPoints(ag_ctf_capturepoints.value, TRUE);
-	pPlayer->AddPointsToTeam(ag_ctf_teamcapturepoints.value, TRUE);
-
-	//And give the team a capture
-	if (FStrEq(CTF_TEAM1_NAME, m_szTeamName))
-  {
-    MESSAGE_BEGIN( MSG_ALL, gmsgCTFSound );
-      WRITE_BYTE( RedScores );
+  //And give the team a capture
+  if (FStrEq(CTF_TEAM1_NAME, m_szTeamName)) {
+    MESSAGE_BEGIN(MSG_ALL, gmsgCTFSound);
+      WRITE_BYTE(RedScores);
     MESSAGE_END();
 
-		s_iTeam2Captures++;
-    UTIL_LogPrintf("Team \"%s\" triggered \"Capture\" (%s \"%d\") (%s \"%d\")\n",CTF_TEAM2_NAME,CTF_TEAM1_NAME,s_iTeam1Captures,CTF_TEAM2_NAME,s_iTeam2Captures);
+    s_iTeam2Captures++;
+    UTIL_LogPrintf("Team \"%s\" triggered \"Capture\" (%s \"%d\") (%s \"%d\")", CTF_TEAM2_NAME, CTF_TEAM1_NAME, s_iTeam1Captures, CTF_TEAM2_NAME, s_iTeam2Captures);
 
-    if (ag_ctf_roundbased.value)
-      g_pGameRules->m_CTF.RoundOver(CTF_TEAM2_NAME);
+    if (ag_ctf_roundbased.value) g_pGameRules->m_CTF.RoundOver(CTF_TEAM2_NAME);
   }
-	else if (FStrEq(CTF_TEAM2_NAME, m_szTeamName))
-  {
-    MESSAGE_BEGIN( MSG_ALL, gmsgCTFSound );
-      WRITE_BYTE( BlueScores );
+
+  else if (FStrEq(CTF_TEAM2_NAME, m_szTeamName)) {
+    MESSAGE_BEGIN(MSG_ALL, gmsgCTFSound);
+      WRITE_BYTE(BlueScores);
     MESSAGE_END();
 
-		s_iTeam1Captures++;
-    UTIL_LogPrintf("Team \"%s\" triggered \"Capture\" (%s \"%d\") (%s \"%d\")\n",CTF_TEAM1_NAME,CTF_TEAM1_NAME,s_iTeam1Captures,CTF_TEAM2_NAME,s_iTeam2Captures);
+    s_iTeam1Captures++;
+    UTIL_LogPrintf("Team \"%s\" triggered \"Capture\" (%s \"%d\") (%s \"%d\")", CTF_TEAM1_NAME, CTF_TEAM1_NAME, s_iTeam1Captures, CTF_TEAM2_NAME, s_iTeam2Captures);
 
-    if (ag_ctf_roundbased.value)
-      g_pGameRules->m_CTF.RoundOver(CTF_TEAM1_NAME);
+    if (ag_ctf_roundbased.value) g_pGameRules->m_CTF.RoundOver(CTF_TEAM1_NAME);
   }
 
-	ResetFlag( m_szTeamName );
+  ResetFlag(m_szTeamName);
 }
 
 void AgCTFFlag::ResetFlag()
 {
   AgCTFFlag::ResetFlag(m_szTeamName);
+  AgString sText = m_szTeamName;
+  sText += " flag returned!";
+  AgConsole(sText.c_str());
+  UTIL_ClientPrintAll(HUD_PRINTCENTER, sText.c_str());
 
-	char szText[201];
-	sprintf(szText, "%s flag returned!", m_szTeamName);
-  AgConsole(szText);
-	UTIL_ClientPrintAll( HUD_PRINTCENTER, szText );
-
-	if (FStrEq(CTF_TEAM1_NAME, m_szTeamName))
-	{
+  if (FStrEq(CTF_TEAM1_NAME, m_szTeamName)) {
     MESSAGE_BEGIN( MSG_ALL, gmsgCTFSound );
       WRITE_BYTE( BlueFlagReturned );
     MESSAGE_END();
-	}
-	else if (FStrEq(CTF_TEAM2_NAME, m_szTeamName))
-	{
+  }
+
+  else if (FStrEq(CTF_TEAM2_NAME, m_szTeamName)) {
     MESSAGE_BEGIN( MSG_ALL, gmsgCTFSound );
       WRITE_BYTE( RedFlagReturned );
     MESSAGE_END();
-	}
+  }
 
-  if (m_bDropped)
-	  UTIL_Remove( this );
+  if (m_bDropped) UTIL_Remove(this);
 }
 
 void AgCTFFlag::ResetFlag(const char *szTeamName)
@@ -691,259 +668,235 @@ void AgCTFFlag::Materialize( void )
 
 BOOL AgCTFFlag::MyTouch( CBasePlayer *pPlayer )
 {
-	char szText[201];
+    AgString sText;
 
-	// Can only carry one flag and can not pickup own flag
-	if (FStrEq(CTF_TEAM1_NAME, m_szTeamName))
-	{
-		//if client has other teams flag and it isn't a dropped flag, then there is a capture!
-		if ( pPlayer->m_bFlagTeam2 && !m_bDropped)
-		{
-			pPlayer->m_bFlagTeam2 = false;
-			
-      UTIL_SendDirectorMessage( pPlayer->edict(), this->edict(), 10 | DRC_FLAG_DRAMATIC);
-			Capture(pPlayer, CTF_TEAM2_NAME);
-			return FALSE;
-		}
-		else if ( pPlayer->m_bFlagTeam1 )
-		{
-			return FALSE;
-		}
-		else if (FStrEq(pPlayer->m_szTeamName, CTF_TEAM1_NAME))
-		{
-			//if dropped, return flag
-			if (m_bDropped)
-			{
-				ResetFlag(CTF_TEAM1_NAME);
-				sprintf(szText, "%s returned the %s flag!", STRING(pPlayer->pev->netname), m_szTeamName);
-        AgConsole(szText);
-				UTIL_ClientPrintAll( HUD_PRINTCENTER, szText );
-				UTIL_Remove( this );
+    // Can only carry one flag and can not pickup own flag
+    if (FStrEq(CTF_TEAM1_NAME, m_szTeamName)) {
+        //if client has other teams flag and it isn't a dropped flag, then there is a capture!
+        if (pPlayer->m_bFlagTeam2 && (! m_bDropped)) {
+            pPlayer->m_bFlagTeam2 = false;
+            UTIL_SendDirectorMessage(pPlayer->edict(), this->edict(), 10 | DRC_FLAG_DRAMATIC);
+            Capture(pPlayer, CTF_TEAM2_NAME);
+            return FALSE;
+        }
 
-        pPlayer->AddPoints(ag_ctf_returnpoints.value, TRUE);
+        if (pPlayer->m_bFlagTeam1) return FALSE;
 
-        MESSAGE_BEGIN( MSG_ALL, gmsgCTFSound );
-          WRITE_BYTE( BlueFlagReturned );
-        MESSAGE_END();
-			}
-			//but don't pick it up!
-			return FALSE;
-		}
-	}
-	else if (FStrEq(CTF_TEAM2_NAME, m_szTeamName))
-	{
-		//if client has other teams flag and it isn't a dropped flag, then there is a capture!
-		if ( pPlayer->m_bFlagTeam1 && !m_bDropped)
-		{
-			pPlayer->m_bFlagTeam1 = false;
+        if (FStrEq(pPlayer->m_szTeamName, CTF_TEAM1_NAME)) {
+            //if dropped, return flag
+            if (m_bDropped) {
+                ResetFlag(CTF_TEAM1_NAME);
+                sText = STRING(pPlayer->pev->netname);
+                sText.resize(AgStripColors(const_cast<char *>(sText.c_str())));
+                sText += " returned the " + AgString(m_szTeamName) + " flag!";
+                AgConsole(sText.c_str());
+                UTIL_ClientPrintAll(HUD_PRINTCENTER, sText.c_str());
+                UTIL_Remove(this);
 
-      UTIL_SendDirectorMessage( pPlayer->edict(), this->edict(), 10 | DRC_FLAG_DRAMATIC);
-			Capture(pPlayer, CTF_TEAM1_NAME);
+                pPlayer->AddPoints(ag_ctf_returnpoints.value, TRUE);
 
-			return FALSE;
-		}
-		else if ( pPlayer->m_bFlagTeam2 )
-		{
-			return FALSE;
-		}
-		else if (FStrEq(pPlayer->m_szTeamName, CTF_TEAM2_NAME))
-		{
-			//if dropped, return flag
-			if (m_bDropped)
-			{
-				ResetFlag(CTF_TEAM2_NAME);
-				sprintf(szText, "%s returned the %s flag!", STRING(pPlayer->pev->netname), m_szTeamName);
-        AgConsole(szText);
-				UTIL_ClientPrintAll( HUD_PRINTCENTER, szText );
-				UTIL_Remove( this );
+                MESSAGE_BEGIN(MSG_ALL, gmsgCTFSound);
+                    WRITE_BYTE(BlueFlagReturned);
+                MESSAGE_END();
+            }
 
-        MESSAGE_BEGIN( MSG_ALL, gmsgCTFSound );
-          WRITE_BYTE( RedFlagReturned );
-        MESSAGE_END();
-
-        pPlayer->AddPoints(ag_ctf_returnpoints.value, TRUE);
-			}
-			//but don't pick it up!
-			return FALSE;
-		}
-	}
-
-	if ( ( pPlayer->pev->weapons & (1<<WEAPON_SUIT) ) )
-	{
-		if (FStrEq(CTF_TEAM1_NAME, m_szTeamName))
-		{
-			pPlayer->m_bFlagTeam1 = true;
-			// player is now carrying the flag of team1, so give him the flag
-
-			CBaseEntity *pEnt = CBaseEntity::Create( "carried_flag_team1", pev->origin, pev->angles, pPlayer->edict() );
-			AgCTFPlayerFlag *pCarriedFlag = (AgCTFPlayerFlag *)pEnt;
-			pCarriedFlag->m_pOwner = pPlayer;
-			s_iPlayerFlag1 = pPlayer->entindex();
-
-      /*
-      //Glow blue
-			pCarriedFlag->pev->renderfx = kRenderFxGlowShell;
-			pCarriedFlag->pev->rendercolor = Vector( 0, 0, 255 );	// RGB
-			pCarriedFlag->pev->renderamt = 100;	// Shell size
-      */
-		}
-		else if (FStrEq(CTF_TEAM2_NAME, m_szTeamName))
-		{
-			pPlayer->m_bFlagTeam2 = true;
-			// player is now carrying the flag of team2, so give him the flag
-			CBaseEntity *pEnt = CBaseEntity::Create( "carried_flag_team2", pev->origin, pev->angles, pPlayer->edict() );
-			AgCTFPlayerFlag *pCarriedFlag = (AgCTFPlayerFlag *)pEnt;
-			pCarriedFlag->m_pOwner = pPlayer;
-			s_iPlayerFlag2 = pPlayer->entindex();
-      /*
-      //Glow red
-			pCarriedFlag->pev->renderfx = kRenderFxGlowShell;
-			pCarriedFlag->pev->rendercolor = Vector( 255, 0, 0 );	// RGB
-			pCarriedFlag->pev->renderamt = 100;	// Shell size
-      */
-		}
-		MESSAGE_BEGIN( MSG_ONE, gmsgItemPickup, NULL, pPlayer->pev );
-			WRITE_STRING( STRING(pev->classname) );
-		MESSAGE_END();
-
-		//Let all players hear and read that the flag is gone
-		char szText[201];
-
-		if (FStrEq(CTF_TEAM1_NAME, m_szTeamName))
-    {
-      if (!g_bTeam1FlagLost)
-        pPlayer->AddPoints(ag_ctf_stealpoints.value, TRUE);
-			sprintf(szText, "%s got the %s flag!\n", STRING(pPlayer->pev->netname), CTF_TEAM1_NAME);
-    }
-		else if (FStrEq(CTF_TEAM2_NAME, m_szTeamName))
-    {
-      if (!g_bTeam2FlagLost)
-        pPlayer->AddPoints(ag_ctf_stealpoints.value, TRUE);
-			sprintf(szText, "%s got the %s flag!\n", STRING(pPlayer->pev->netname), CTF_TEAM2_NAME);
+            //but don't pick it up!
+            return FALSE;
+        }
     }
 
-    AgConsole(szText);
-		UTIL_ClientPrintAll( HUD_PRINTCENTER, szText );
+    else if (FStrEq(CTF_TEAM2_NAME, m_szTeamName)) {
+        //if client has other teams flag and it isn't a dropped flag, then there is a capture!
+        if (pPlayer->m_bFlagTeam1 && (! m_bDropped)) {
+            pPlayer->m_bFlagTeam1 = false;
+            UTIL_SendDirectorMessage(pPlayer->edict(), this->edict(), 10 | DRC_FLAG_DRAMATIC);
+            Capture(pPlayer, CTF_TEAM1_NAME);
+            return FALSE;
+        }
 
-    for ( int i = 1; i <= gpGlobals->maxClients; i++ )
-    {
-      CBasePlayer* pPlayerLoop = AgPlayerByIndex(i);
-      if (pPlayerLoop)
-      {
-        if (pPlayer != pPlayerLoop)
-        {
-          if (pPlayerLoop->IsSpectator() || pPlayerLoop->IsProxy())
-          {
-            if (!m_bDropped)
-            {
-              if (FStrEq(m_szTeamName, CTF_TEAM1_NAME))
-              {
-	              MESSAGE_BEGIN( MSG_ONE, gmsgCTFSound, NULL, pPlayerLoop->pev );
-                  WRITE_BYTE(BlueFlagStolen);
+        if (pPlayer->m_bFlagTeam2) return FALSE;
+
+        if (FStrEq(pPlayer->m_szTeamName, CTF_TEAM2_NAME)) {
+            //if dropped, return flag
+            if (m_bDropped) {
+                ResetFlag(CTF_TEAM2_NAME);
+                sText = STRING(pPlayer->pev->netname);
+                sText.resize(AgStripColors(const_cast<char *>(sText.c_str())));
+                sText += " returned the " + AgString(m_szTeamName) + " flag!";
+                AgConsole(sText.c_str());
+                UTIL_ClientPrintAll(HUD_PRINTCENTER, sText.c_str());
+                UTIL_Remove(this);
+
+                pPlayer->AddPoints(ag_ctf_returnpoints.value, TRUE);
+
+                MESSAGE_BEGIN(MSG_ALL, gmsgCTFSound);
+                    WRITE_BYTE(RedFlagReturned);
+                MESSAGE_END();
+
+            }
+
+            //but don't pick it up!
+            return FALSE;
+        }
+    }
+
+    if ((pPlayer->pev->weapons & (1 << WEAPON_SUIT))) {
+        if (FStrEq(CTF_TEAM1_NAME, m_szTeamName)) {
+            pPlayer->m_bFlagTeam1 = true;
+            // player is now carrying the flag of team1, so give him the flag
+            CBaseEntity *pEnt = CBaseEntity::Create("carried_flag_team1", pev->origin, pev->angles, pPlayer->edict());
+            AgCTFPlayerFlag *pCarriedFlag = (AgCTFPlayerFlag *)pEnt;
+            pCarriedFlag->m_pOwner = pPlayer;
+            s_iPlayerFlag1 = pPlayer->entindex();
+            /*
+            //Glow blue
+            pCarriedFlag->pev->renderfx = kRenderFxGlowShell;
+            pCarriedFlag->pev->rendercolor = Vector( 0, 0, 255 );	// RGB
+            pCarriedFlag->pev->renderamt = 100;	// Shell size
+            */
+        }
+
+        else if (FStrEq(CTF_TEAM2_NAME, m_szTeamName)) {
+            pPlayer->m_bFlagTeam2 = true;
+            // player is now carrying the flag of team2, so give him the flag
+            CBaseEntity *pEnt = CBaseEntity::Create("carried_flag_team2", pev->origin, pev->angles, pPlayer->edict());
+            AgCTFPlayerFlag *pCarriedFlag = (AgCTFPlayerFlag *)pEnt;
+            pCarriedFlag->m_pOwner = pPlayer;
+            s_iPlayerFlag2 = pPlayer->entindex();
+            /*
+            //Glow red
+            pCarriedFlag->pev->renderfx = kRenderFxGlowShell;
+            pCarriedFlag->pev->rendercolor = Vector( 255, 0, 0 );	// RGB
+            pCarriedFlag->pev->renderamt = 100;	// Shell size
+            */
+        }
+
+        MESSAGE_BEGIN(MSG_ONE, gmsgItemPickup, NULL, pPlayer->pev);
+            WRITE_STRING(STRING(pev->classname));
+        MESSAGE_END();
+
+        //Let all players hear and read that the flag is gone
+
+        if (FStrEq(CTF_TEAM1_NAME, m_szTeamName)) {
+            if (! g_bTeam1FlagLost) pPlayer->AddPoints(ag_ctf_stealpoints.value, TRUE);
+            sText = STRING(pPlayer->pev->netname);
+            sText.resize(AgStripColors(const_cast<char *>(sText.c_str())));
+            sText += " got the " + AgString(CTF_TEAM1_NAME) + " flag!";
+        }
+
+        else if (FStrEq(CTF_TEAM2_NAME, m_szTeamName)) {
+            if (! g_bTeam2FlagLost) pPlayer->AddPoints(ag_ctf_stealpoints.value, TRUE);
+            sText = STRING(pPlayer->pev->netname);
+            sText.resize(AgStripColors(const_cast<char *>(sText.c_str())));
+            sText += " got the " + AgString(CTF_TEAM2_NAME) + " flag!";
+        }
+
+        AgConsole(sText.c_str());
+        UTIL_ClientPrintAll(HUD_PRINTCENTER, sText.c_str());
+
+        for (int i = 1; i <= gpGlobals->maxClients; i++) {
+          CBasePlayer* pPlayerLoop = AgPlayerByIndex(i);
+          if (pPlayerLoop) {
+            if (pPlayer != pPlayerLoop) {
+              if (pPlayerLoop->IsSpectator() || pPlayerLoop->IsProxy()) {
+                if (! m_bDropped) {
+                  if (FStrEq(m_szTeamName, CTF_TEAM1_NAME)) {
+                    MESSAGE_BEGIN(MSG_ONE, gmsgCTFSound, NULL, pPlayerLoop->pev);
+                      WRITE_BYTE(BlueFlagStolen);
+                    MESSAGE_END();
+                  }
+                  else {
+                    MESSAGE_BEGIN(MSG_ONE, gmsgCTFSound, NULL, pPlayerLoop->pev);
+                      WRITE_BYTE(RedFlagStolen);
+                    MESSAGE_END();
+                  }
+                }
+              }
+              else if (FStrEq(pPlayerLoop->m_szTeamName, m_szTeamName)) {
+                MESSAGE_BEGIN(MSG_ONE, gmsgCTFSound, NULL, pPlayerLoop->pev);
+                  WRITE_BYTE(EnemyHaveFlag);
                 MESSAGE_END();
               }
-              else
-              {
-	              MESSAGE_BEGIN( MSG_ONE, gmsgCTFSound, NULL, pPlayerLoop->pev );
-                  WRITE_BYTE(RedFlagStolen);
+              else {
+                MESSAGE_BEGIN(MSG_ONE, gmsgCTFSound, NULL, pPlayerLoop->pev);
+                  WRITE_BYTE(TeamHaveFlag);
                 MESSAGE_END();
               }
             }
-          }
-          else if (FStrEq(pPlayerLoop->m_szTeamName, m_szTeamName))
-          {
-	          MESSAGE_BEGIN( MSG_ONE, gmsgCTFSound, NULL, pPlayerLoop->pev );
-              WRITE_BYTE(EnemyHaveFlag);
-            MESSAGE_END();
-          }
-          else 
-          {
-	          MESSAGE_BEGIN( MSG_ONE, gmsgCTFSound, NULL, pPlayerLoop->pev );
-              WRITE_BYTE(TeamHaveFlag);
-            MESSAGE_END();
+            else {
+              MESSAGE_BEGIN(MSG_ONE, gmsgCTFSound, NULL, pPlayerLoop->pev);
+                WRITE_BYTE(YouHaveFlag);
+              MESSAGE_END();
+            }
           }
         }
-        else
-        {
-	        MESSAGE_BEGIN( MSG_ONE, gmsgCTFSound, NULL, pPlayerLoop->pev );
-            WRITE_BYTE(YouHaveFlag);
-          MESSAGE_END();
+
+        int iPowerUp = 0;
+
+        if (FStrEq(CTF_TEAM1_NAME, m_szTeamName)) {
+            g_bTeam1FlagStolen = true;
+            g_bTeam1FlagLost = false;
+
+            //Glow red
+            pPlayer->pev->renderfx = kRenderFxGlowShell;
+            pPlayer->pev->rendercolor = Vector(128, 0, 0); // RGB
+            pPlayer->pev->renderamt = 50; // Shell size
+
+            iPowerUp = 2;
         }
-      }
+
+        else if (FStrEq(CTF_TEAM2_NAME, m_szTeamName)) {
+            g_bTeam2FlagStolen = true;
+            g_bTeam2FlagLost = false;
+
+            //Glow blue
+            pPlayer->pev->renderfx = kRenderFxGlowShell;
+            pPlayer->pev->rendercolor = Vector(0, 0, 128); // RGB
+            pPlayer->pev->renderamt = 50; // Shell size
+
+            iPowerUp = 2;
+        }
+
+        UTIL_SendDirectorMessage(pPlayer->edict(), this->edict(), 8 | DRC_FLAG_DRAMATIC);
+
+        return TRUE;
     }
 
-    int iPowerUp = 0;
-
-		if (FStrEq(CTF_TEAM1_NAME, m_szTeamName))
-    {
-      g_bTeam1FlagStolen = true;
-      g_bTeam1FlagLost = false;
-
-
-      //Glow red
-			pPlayer->pev->renderfx = kRenderFxGlowShell;
-			pPlayer->pev->rendercolor = Vector( 128, 0, 0 );	// RGB
-			pPlayer->pev->renderamt = 50;	// Shell size
-
-			iPowerUp = 2;
-    }
-		else if (FStrEq(CTF_TEAM2_NAME, m_szTeamName))
-    {
-			g_bTeam2FlagStolen = true;
-      g_bTeam2FlagLost = false;
-
-      //Glow blue
-			pPlayer->pev->renderfx = kRenderFxGlowShell;
-			pPlayer->pev->rendercolor = Vector( 0, 0, 128 );	// RGB
-			pPlayer->pev->renderamt = 50;	// Shell size
-
-			iPowerUp = 2;
-    }
-
-    UTIL_SendDirectorMessage( pPlayer->edict(), this->edict(), 8 | DRC_FLAG_DRAMATIC);
-
-		return TRUE;		
-	}
-	return FALSE;
+    return FALSE;
 }
 
 void AgCTFFlag::Think( void )
 {
-	if (m_bDropped && m_fNextReset <= gpGlobals->time)
-	{
-		//Let all players know that the flag has been returned
-		char szText[201];
+    if (m_bDropped && m_fNextReset <= gpGlobals->time) {
+        //Let all players know that the flag has been returned
+        AgString sText = " flag has returned.";
 
-		if (FStrEq(CTF_TEAM1_NAME, m_szTeamName))
-		{
-			sprintf(szText, "The %s flag has returned.\n", CTF_TEAM1_NAME);
-			ResetFlag(CTF_TEAM1_NAME);
+        if (FStrEq(CTF_TEAM1_NAME, m_szTeamName)) {
+            sText = "The " + (CTF_TEAM1_NAME + sText);
+            ResetFlag(CTF_TEAM1_NAME);
+            MESSAGE_BEGIN(MSG_ALL, gmsgCTFSound);
+                WRITE_BYTE(BlueFlagReturned);
+            MESSAGE_END();
+        }
 
-      MESSAGE_BEGIN( MSG_ALL, gmsgCTFSound );
-        WRITE_BYTE( BlueFlagReturned );
-      MESSAGE_END();
-		}
-		else if (FStrEq(CTF_TEAM2_NAME, m_szTeamName))
-		{
-			sprintf(szText, "The %s flag has returned.\n", CTF_TEAM2_NAME);
-			ResetFlag(CTF_TEAM2_NAME);
+        else if (FStrEq(CTF_TEAM2_NAME, m_szTeamName)) {
+            sText = "The " + (CTF_TEAM2_NAME + sText);
+            ResetFlag(CTF_TEAM2_NAME);
+            MESSAGE_BEGIN(MSG_ALL, gmsgCTFSound);
+                WRITE_BYTE(RedFlagReturned);
+            MESSAGE_END();
+        }
 
-      MESSAGE_BEGIN( MSG_ALL, gmsgCTFSound );
-        WRITE_BYTE( RedFlagReturned );
-      MESSAGE_END();
-		}
+        AgConsole(sText.c_str());
+        UTIL_ClientPrintAll(HUD_PRINTCENTER, sText.c_str());
+        UTIL_Remove(this);
+        return;
+    }
 
-    AgConsole(szText);
-		UTIL_ClientPrintAll( HUD_PRINTCENTER, szText );
-		UTIL_Remove( this );
-		return;
-	}
-	pev->frame += pev->framerate;
-	if (pev->frame < 0.0 || pev->frame >= 256.0) 
-	{
-		pev->frame -= (int)(pev->frame / 256.0) * 256.0;
-	}
-	pev->nextthink = gpGlobals->time + 0.1;
+    pev->frame += pev->framerate;
+    if (pev->frame < 0.0 || pev->frame >= 256.0) pev->frame -= (int)(pev->frame / 256.0) * 256.0;
+
+    pev->nextthink = gpGlobals->time + 0.1;
 }
 
 class AgCTFFlagTeam1 : public AgCTFFlag
@@ -1512,4 +1465,3 @@ void AgCTFFileItemCache::Init()
 }
 
 //-- Martin Webrant
-

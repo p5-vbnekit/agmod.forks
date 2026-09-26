@@ -658,23 +658,23 @@ void AgDirList(const AgString& sDir, AgStringSet& setFiles)
 #endif
 }
 
-void AgStripColors(char* pszString)
+size_t AgStripColors(char* pszString)
 {
-  char* pszIt = pszString;
-  while ('\0' != *pszIt)
-  {
-    if ('^' == *pszIt)
-    {
-      ++pszIt;
-		  if (*pszIt >= '0' && *pszIt <= '9')
-		  {
-			  --pszIt;
-			  memmove(pszIt,pszIt+2,strlen(pszIt+2)+1);
-		  }
+    bool state = false;
+    size_t first = 0, second = 0;
+
+    if (pszString) while (true) {
+        if (0 < second) pszString[first] = pszString[first + second];
+        if ('\0' == pszString[first]) break;
+        if ('^' == pszString[first]) { ++first; state = true; continue; };
+        if (! state) { ++first; continue; };
+        state = false;
+        if (('0' > pszString[first]) || ('9' < pszString[first])) { ++first; continue; };
+        --first;
+        second += 2;
     }
-    else
-      ++pszIt;
-  }
+
+    return first;
 }
 
 void AgGetDetails(char* pszDetails, int iMaxSize, int* piSize)

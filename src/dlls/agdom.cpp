@@ -263,10 +263,11 @@ void AgDOMControlPoint::Capture(CBasePlayer *pPlayer, const char *szTeamName)
 
   // Inform all players that zone has been taken control of by playername	
   // really need identifiers for each control point! 
-  char szText[300];
-  sprintf(szText, "%s captures CP at %s!", STRING(pPlayer->pev->netname), m_szLocation);
-  AgConsole(szText);
-	UTIL_ClientPrintAll( HUD_PRINTCENTER, szText );
+  AgString sText = STRING(pPlayer->pev->netname);
+  sText.resize(AgStripColors(const_cast<char *>(sText.c_str())));
+  sText += " captures CP at " + AgString(m_szLocation) + "!";
+  AgConsole(sText.c_str());
+  UTIL_ClientPrintAll(HUD_PRINTCENTER, sText.c_str());
 }
 
 void AgDOMControlPoint::ChangeControllingTeam( const char *szTeamName )
@@ -377,11 +378,11 @@ void AgDOMControlPoint::Think( void )
 
   // Have we pased the max capture score limit, if so return control of this flag to 
   // a neutral state. 
-  if ( m_iConsecutiveScores >= ag_dom_resetscorelimit.value ){
-    char szText[201];
-    sprintf(szText, "Neutral CP available at %s", m_szLocation);
-    AgConsole(szText);
-    UTIL_ClientPrintAll( HUD_PRINTCENTER, szText );
+  if (m_iConsecutiveScores >= ag_dom_resetscorelimit.value) {
+    AgString sText = "Neutral CP available at ";
+    sText += m_szLocation;
+    AgConsole(sText.c_str());
+    UTIL_ClientPrintAll(HUD_PRINTCENTER, sText.c_str());
     Reset();
   }
 
